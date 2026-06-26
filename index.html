@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelas Homelab - Tukar PC Lama Jadi Server Pintar</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Poppins:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #020617;
+            /* Very dark blue/black */
+            --bg-card: #0f172a;
+            --accent-blue: #3B82F6;
+            --accent-blue-glow: rgba(59, 130, 246, 0.5);
+            --accent-orange: #F97316;
+            --accent-orange-glow: rgba(249, 115, 22, 0.5);
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            /* Lenis requires smooth scrolling to be disabled on html/body */
+            scroll-behavior: auto !important;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .brand {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Lenis Smooth Scroll Setup */
+        html.lenis,
+        html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        .lenis.lenis-scrolling iframe {
+            pointer-events: none;
+        }
+
+        /* Global Layout */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        section {
+            padding: 120px 0;
+            position: relative;
+        }
+
+        /* Background Effects */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .glow-blue {
+            background: var(--accent-blue);
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow-orange {
+            background: var(--accent-orange);
+            width: 400px;
+            height: 400px;
+            bottom: 20%;
+            right: -100px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .scroll-indicator .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--text-main);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .scroll-indicator .wheel {
+            width: 4px;
+            height: 8px;
+            background: var(--accent-orange);
+            border-radius: 2px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scroll 1.5s infinite;
+        }
+
+        @keyframes scroll {
+            0% {
+                top: 10px;
+                opacity: 1;
+            }
+
+            100% {
+                top: 30px;
+                opacity: 0;
+            }
+        }
+
+        /* Section Titles */
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-subtitle {
+            color: var(--accent-orange);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 1rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Two Column Layout */
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .split-layout.reverse {
+            direction: rtl;
+        }
+
+        .split-layout.reverse>* {
+            direction: ltr;
+        }
+
+        .text-content p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .text-content ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .text-content li {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-main);
+        }
+
+        .text-content li i {
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+        }
+
+        /* Cards & Tiles */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-orange));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .glass-card i {
+            font-size: 3rem;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+        }
+
+        .glass-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .glass-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Comparison Table/Cards */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .comp-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comp-card h3 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comp-card.winner {
+            border: 2px solid var(--accent-blue);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .comp-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+        }
+
+        .comp-list li:last-child {
+            border-bottom: none;
+        }
+
+        .comp-list .fa-check {
+            color: #10B981;
+        }
+
+        .comp-list .fa-xmark {
+            color: #EF4444;
+        }
+
+        /* Terminal UI */
+        .terminal {
+            background: #0f172a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .terminal-header {
+            background: #1e293b;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .terminal-dots span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dots span:nth-child(1) {
+            background: #FF5F56;
+        }
+
+        .terminal-dots span:nth-child(2) {
+            background: #FFBD2E;
+        }
+
+        .terminal-dots span:nth-child(3) {
+            background: #27C93F;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #10B981;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .terminal-body .prompt {
+            color: var(--accent-blue);
+        }
+
+        .terminal-body .command {
+            color: #fff;
+        }
+
+        /* Copy Command Box */
+        .cmd-box {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            max-width: 650px;
+            margin: 30px auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .cmd-text {
+            font-family: 'Courier New', Courier, monospace;
+            color: #10B981;
+            font-size: 1.05rem;
+            white-space: nowrap;
+            overflow-x: auto;
+            flex-grow: 1;
+            text-align: left;
+            padding-right: 10px;
+        }
+
+        .cmd-text::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .cmd-text::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .btn-copy {
+            background: var(--accent-blue);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px var(--accent-blue-glow);
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--accent-blue-glow);
+        }
+
+        .btn-copy:active {
+            transform: translateY(0);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -1px;
+        }
+
+        .timeline-item {
+            padding: 20px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            top: 25px;
+            background: var(--bg-dark);
+            border: 4px solid var(--accent-orange);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+
+        .time {
+            color: var(--accent-blue);
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Architecture Flow */
+        .arch-flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .arch-box {
+            background: var(--bg-card);
+            padding: 20px 40px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-blue);
+            font-size: 1.5rem;
+            font-weight: 600;
+            width: 300px;
+            text-align: center;
+        }
+
+        .arch-arrow {
+            color: var(--accent-orange);
+            font-size: 2rem;
+            animation: bounceDown 2s infinite;
+        }
+
+        @keyframes bounceDown {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(10px);
+            }
+
+            60% {
+                transform: translateY(5px);
+            }
+        }
+
+        /* Utilities */
+        .reveal {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer h2 {
+            color: var(--accent-orange);
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+
+            .split-layout,
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .timeline::after {
+                left: 31px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+                text-align: left !important;
+            }
+
+            .timeline-item:nth-child(even) {
+                left: 0%;
+            }
+
+            .timeline-item::after {
+                left: 21px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glow-orb glow-blue"></div>
+
+    <!-- 1. HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h5 class="section-subtitle reveal-hero">Kelas Homelab</h5>
+            <h1 class="reveal-hero">Tukar PC Lama Jadi<br><span>Server Pintar</span> Anda</h1>
+            <p class="reveal-hero">Belajar bina server peribadi menggunakan PC terpakai & aplikasi moden secara
+                hands-on.</p>
+
+            <div class="reveal-hero" style="margin-top: 40px; display: flex; justify-content: center; gap: 40px;">
+                <div class="trainer-info">
+                    <span style="display:block; color:var(--text-muted); font-size:0.9rem;">Sesi Oleh</span>
+                    <strong>Maui Sabily</strong>
+                </div>
+                <div class="trainer-info">
+                    <span style="display:block; color:var(--text-muted); font-size:0.9rem;">Objektif</span>
+                    <strong>1 Server Berjaya Berjalan</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            Scroll
+        </div>
+    </section>
+
+    <!-- 2. SALUTATION & INTRO -->
+    <section class="container" id="intro">
+        <div class="split-layout">
+            <div class="text-content reveal-up">
+                <span class="section-subtitle">Pengenalan</span>
+                <h2 class="section-title">Selamat Datang ke Makmal IT Anda.</h2>
+                <p>Assalamualaikum dan salam sejahtera. Hari ini kita akan merungkai potensi sebenar komputer lama yang
+                    terbiar berhabuk di rumah anda.</p>
+                <p>Apa sebenarnya <strong>Homelab</strong>? Ia adalah makmal IT peribadi anda. Tempat selamat untuk anda
+                    mencuba, belajar, dan membina sistem sendiri tanpa had.</p>
+                <ul>
+                    <li><i class="fa-solid fa-house-signal"></i> Pusat Smart Home</li>
+                    <li><i class="fa-solid fa-folder-open"></i> Cloud Storage Peribadi</li>
+                    <li><i class="fa-solid fa-film"></i> Media Server (Netflix sendiri!)</li>
+                    <li><i class="fa-solid fa-shield-halved"></i> Keselamatan Data & Rangkaian</li>
+                </ul>
+            </div>
+            <div class="image-wrapper reveal-right">
+                <div class="glass-card text-center" style="padding: 60px 40px;">
+                    <i class="fa-solid fa-server"
+                        style="font-size: 5rem; color: var(--accent-orange); margin-bottom: 30px; display: block;"></i>
+                    <h3>Objektif Utama</h3>
+                    <p style="font-size: 1.2rem; color: #fff;">Balik kelas hari ini dengan server pertama yang berjaya
+                        berjalan & boleh diakses dari telefon pintar anda.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. COMPARISON: WHY OLD PC? -->
+    <section class="container" id="why">
+        <div class="section-header reveal-up">
+            <span class="section-subtitle">Perbandingan</span>
+            <h2 class="section-title">Kenapa Guna PC Lama?</h2>
+        </div>
+
+        <div class="comparison">
+            <div class="comp-card winner reveal-up">
+                <h3><i class="fa-solid fa-computer" style="color:var(--accent-blue); margin-right:15px;"></i> PC
+                    Terpakai</h3>
+                <ul class="comp-list">
+                    <li><i class="fa-solid fa-check"></i> Kos permulaan hampir percuma</li>
+                    <li><i class="fa-solid fa-check"></i> Mengurangkan sisa elektronik (Kitar Semula)</li>
+                    <li><i class="fa-solid fa-check"></i> Bebas pilih Sistem Operasi</li>
+                    <li><i class="fa-solid fa-check"></i> Proses pembelajaran teknikal yang tinggi</li>
+                    <li><i class="fa-solid fa-check"></i> Boleh di-upgrade pada masa depan</li>
+                </ul>
+            </div>
+
+            <div class="comp-card reveal-up" style="transition-delay: 0.2s;">
+                <h3><i class="fa-solid fa-cloud" style="color:var(--text-muted); margin-right:15px;"></i> NAS / Cloud
+                </h3>
+                <ul class="comp-list">
+                    <li><i class="fa-solid fa-xmark"></i> Kos peranti NAS sangat mahal</li>
+                    <li><i class="fa-solid fa-xmark"></i> Langganan Cloud (bayaran bulanan berterusan)</li>
+                    <li><i class="fa-solid fa-xmark"></i> Terikat dengan ekosistem jenama (Vendor Lock-in)</li>
+                    <li><i class="fa-solid fa-xmark"></i> Data privasi di tangan pihak ketiga</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. TIMELINE & ARCHITECTURE -->
+    <section style="background: var(--bg-card); position: relative; z-index: 1;">
+        <div class="glow-orb glow-orange"></div>
+        <div class="container split-layout">
+
+            <div class="reveal-left">
+                <span class="section-subtitle">Senibina Server</span>
+                <h2 class="section-title" style="margin-bottom: 40px;">Flow Sistem Hari Ini</h2>
+                <div class="arch-flow">
+                    <div class="arch-box"><i class="fa-solid fa-laptop"></i> PC / Laptop Lama</div>
+                    <i class="fa-solid fa-arrow-down arch-arrow"></i>
+                    <div class="arch-box" style="border-color: #E95420;"><i class="fa-brands fa-ubuntu"></i> Ubuntu
+                        26.04 LTS</div>
+                    <i class="fa-solid fa-arrow-down arch-arrow"></i>
+                    <div class="arch-box" style="border-color: var(--text-main);"><i
+                            class="fa-solid fa-layer-group"></i> CasaOS Dashboard</div>
+                    <i class="fa-solid fa-arrow-down arch-arrow"></i>
+                    <div class="arch-box" style="border-color: #2496ED;"><i class="fa-brands fa-docker"></i> Docker
+                        Engine</div>
+                    <i class="fa-solid fa-arrow-down arch-arrow"></i>
+                    <div class="arch-box" style="border-color: #10B981; background: rgba(16, 185, 129, 0.1);"><i
+                            class="fa-solid fa-rocket"></i> Web Apps (Berjalan!)</div>
+                </div>
+            </div>
+
+            <div class="reveal-right">
+                <span class="section-subtitle">Jadual</span>
+                <h2 class="section-title" style="margin-bottom: 40px;">Timeline Kelas</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="time">08:30 Pagi</span>
+                        <h4>Pendaftaran & Setup</h4>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">09:00 Pagi</span>
+                        <h4>Pengenalan Homelab</h4>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">09:30 Pagi</span>
+                        <h4>Asas Ubuntu 26.04 LTS & Terminal</h4>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">10:45 Pagi</span>
+                        <h4>Install CasaOS & GUI</h4>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">02:00 Petang</span>
+                        <h4>Pengurusan Docker</h4>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">03:45 Petang</span>
+                        <h4>Aplikasi Homelab (Demo)</h4>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 5. MODULE 1: UBUNTU & LINUX -->
+    <section class="container" id="ubuntu">
+        <div class="split-layout reverse">
+            <div class="text-content reveal-up">
+                <span class="section-subtitle">Modul 01</span>
+                <h2 class="section-title">Asas Ubuntu 26.04 LTS & Terminal</h2>
+                <p>Linux adalah tulang belakang kepada majoriti server di dunia. Kenapa Ubuntu 26.04 LTS? Kerana ia
+                    popular,
+                    percuma, stabil, dan sokongan komuniti yang sangat meluas.</p>
+                <p>Kita akan belajar berinteraksi dengan server <strong>tanpa mouse</strong>, hanya menggunakan
+                    <em>Command Line Interface (CLI)</em>.
+                </p>
+                <ul>
+                    <li><i class="fa-solid fa-terminal"></i> Login via SSH</li>
+                    <li><i class="fa-solid fa-folder-tree"></i> Navigasi File System (/etc, /var, /home)</li>
+                    <li><i class="fa-solid fa-arrows-rotate"></i> Update OS (apt update & upgrade)</li>
+                </ul>
+            </div>
+
+            <div class="terminal reveal-left">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <span style="color:var(--text-muted); font-size:0.9rem; font-family:sans-serif;">ssh
+                        user@homelab</span>
+                </div>
+                <div class="terminal-body" id="typing-terminal">
+                    <span class="prompt">user@homelab:~$</span> <span class="command">sudo apt update</span><br>
+                    <span style="color:#94A3B8;">[sudo] password for user: </span><br>
+                    <span style="color:#94A3B8;">Hit:1 http://archive.ubuntu.com/ubuntu resolute InRelease</span><br>
+                    <span style="color:#94A3B8;">Get:2 http://security.ubuntu.com/ubuntu resolute-security
+                        InRelease</span><br>
+                    <span style="color:#27C93F;">Reading package lists... Done</span><br><br>
+                    <span class="prompt">user@homelab:~$</span> <span class="command">mkdir server_baru</span><br>
+                    <span class="prompt">user@homelab:~$</span> <span class="command">ls -l</span><br>
+                    <span style="color:#94A3B8;">drwxrwxr-x 2 user user 4096 Jun 26 10:00 server_baru</span><br>
+                    <span class="prompt">user@homelab:~$</span> <span class="cursor"
+                        style="background:#fff; width:10px; display:inline-block; animation: blink 1s infinite;">&nbsp;</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. MODULE 2: DOCKER -->
+    <section class="container" id="docker">
+        <div class="section-header reveal-up">
+            <span class="section-subtitle">Modul 02</span>
+            <h2 class="section-title">Kuasa Docker Containers</h2>
+            <p class="text-center"
+                style="color: var(--text-muted); max-width: 600px; margin: 20px auto 0; font-size:1.2rem;">
+                Docker membolehkan kita jalankan aplikasi dalam "kotak" terasing. Bersih, laju, tiada konflik software.
+            </p>
+        </div>
+
+        <div class="card-grid">
+            <div class="glass-card reveal-up">
+                <i class="fa-solid fa-box-open"></i>
+                <h3>Tanpa Docker</h3>
+                <p>Satu OS, pelbagai software bercampur aduk. Jika satu software rosak atau perlukan versi PHP berbeza,
+                    seluruh server mungkin terjejas (dependency hell).</p>
+            </div>
+            <div class="glass-card reveal-up" style="transition-delay: 0.2s;">
+                <i class="fa-brands fa-docker"></i>
+                <h3>Dengan Docker</h3>
+                <p>Setiap aplikasi hidup dalam 'Container' sendiri. Lengkap dengan persekitaran yang diperlukan. Boleh
+                    dipadam dan dibina semula dalam beberapa saat.</p>
+            </div>
+            <div class="glass-card reveal-up" style="transition-delay: 0.4s; border-color: var(--accent-orange);">
+                <i class="fa-solid fa-code"></i>
+                <h3>Command Asas</h3>
+                <code
+                    style="display:block; background:#000; padding:15px; border-radius:8px; margin-top:15px; color:#10B981; font-family:monospace;">
+                    docker ps<br>
+                    docker images<br>
+                    docker stop &lt;id&gt;<br>
+                    docker rm &lt;id&gt;
+                </code>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. MODULE 3: CASAOS & APPS -->
+    <section style="background: var(--bg-card); position: relative; overflow:hidden;">
+        <div class="glow-orb glow-blue" style="top:50%; right:-200px; left:auto;"></div>
+        <div class="container">
+            <div class="section-header reveal-up">
+                <span class="section-subtitle">Modul 03</span>
+                <h2 class="section-title">CasaOS & Web Apps</h2>
+                <p class="text-center"
+                    style="color: var(--text-muted); max-width: 700px; margin: 20px auto 0; font-size:1.2rem;">
+                    Bosan dengan skrin hitam terminal? CasaOS membawakan dashboard visual yang elegan untuk menguruskan
+                    server dan menginstall aplikasi dengan satu klik.
+                </p>
+            </div>
+
+            <!-- Install CasaOS Command Box -->
+            <div class="cmd-box reveal-up">
+                <span class="cmd-text">curl -fsSL https://get.casaos.io | sudo bash</span>
+                <button class="btn-copy" onclick="copyCommand()">
+                    <i class="fa-regular fa-copy"></i> Salin
+                </button>
+            </div>
+
+            <!-- Steps Section -->
+            <div class="reveal-up" style="margin: 50px auto; max-width: 1000px;">
+                <h3 style="text-align: center; margin-bottom: 30px; color: var(--accent-orange);">Langkah Pemasangan &
+                    Akses CasaOS</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+                    <div class="glass-card" style="padding: 25px; border-radius: 16px;">
+                        <span
+                            style="font-size: 2rem; font-weight: 800; color: var(--accent-blue); display: block; margin-bottom: 10px;">01</span>
+                        <h4 style="margin-bottom: 10px;">Salin & Jalankan</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Salin kod di atas, tampal (*paste*) ke
+                            dalam terminal SSH Ubuntu anda dan tekan Enter.</p>
+                    </div>
+                    <div class="glass-card" style="padding: 25px; border-radius: 16px;">
+                        <span
+                            style="font-size: 2rem; font-weight: 800; color: var(--accent-blue); display: block; margin-bottom: 10px;">02</span>
+                        <h4 style="margin-bottom: 10px;">Tunggu Pemasangan</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Sistem akan memuat turun dan memasang
+                            semua fail yang diperlukan secara automatik (2-5 minit).</p>
+                    </div>
+                    <div class="glass-card" style="padding: 25px; border-radius: 16px;">
+                        <span
+                            style="font-size: 2rem; font-weight: 800; color: var(--accent-blue); display: block; margin-bottom: 10px;">03</span>
+                        <h4 style="margin-bottom: 10px;">Dapatkan IP Akses</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Apabila siap, terminal akan memaparkan
+                            alamat IP peranti anda (cth: <code>http://192.168.x.x</code>).</p>
+                    </div>
+                    <div class="glass-card" style="padding: 25px; border-radius: 16px;">
+                        <span
+                            style="font-size: 2rem; font-weight: 800; color: var(--accent-blue); display: block; margin-bottom: 10px;">04</span>
+                        <h4 style="margin-bottom: 10px;">Buka Web & Daftar</h4>
+                        <p style="font-size: 0.95rem; color: var(--text-muted);">Buka IP tersebut di pelayar web,
+                            kemudian daftar akaun pentadbir (*admin account*) baru anda.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <!-- App 1 -->
+                <div class="glass-card reveal-up">
+                    <i class="fa-regular fa-folder-open" style="color:#EAB308;"></i>
+                    <h3>File Browser</h3>
+                    <p>Urus fail server anda terus melalui pelayar web. Upload, download dan kongsi seperti Google
+                        Drive.</p>
+                </div>
+                <!-- App 2 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.1s;">
+                    <i class="fa-solid fa-play" style="color:#8B5CF6;"></i>
+                    <h3>Jellyfin</h3>
+                    <p>Bina "Netflix" anda sendiri. Stream koleksi filem dan siri TV peribadi ke Smart TV atau telefon.
+                    </p>
+                </div>
+                <!-- App 3 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.2s;">
+                    <i class="fa-solid fa-chart-line" style="color:#10B981;"></i>
+                    <h3>Uptime Kuma</h3>
+                    <p>Dashboard monitoring untuk memantau status server dan rangkaian anda. Terima notifikasi jika
+                        'down'.</p>
+                </div>
+                <!-- App 4 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.3s;">
+                    <i class="fa-solid fa-vault" style="color:#3B82F6;"></i>
+                    <h3>Vaultwarden</h3>
+                    <p>Password manager peribadi (Bitwarden self-hosted). Simpan kata laluan dengan selamat dalam server
+                        sendiri.</p>
+                </div>
+                <!-- App 5 >
+                <div class="glass-card reveal-up" style="transition-delay: 0.4s;">
+                    <i class="fa-solid fa-shield-cat" style="color:#EF4444;"></i>
+                    <h3>AdGuard Home</h3>
+                    <p>DNS server untuk block iklan dan tracker di peringkat rangkaian untuk seluruh peranti dalam
+                        rumah.</p>
+                </div-->
+                <!-- App 6 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.5s;">
+                    <i class="fa-solid fa-ban" style="color:#10B981;"></i>
+                    <h3>Pi-Hole</h3>
+                    <p>Penyekat iklan peringkat DNS. Menapis trackers & iklan sebelum ia sampai ke peranti anda.</p>
+                </div>
+                <!-- App 7 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.6s;">
+                    <i class="fa-solid fa-gauge-high" style="color:#06B6D4;"></i>
+                    <h3>MySpeed</h3>
+                    <p>Memantau & merekod kelajuan internet anda secara berkala secara automatik dalam graf interaktif.
+                    </p>
+                </div>
+                <!-- App 8 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.7s;">
+                    <i class="fa-solid fa-route" style="color:#4F46E5;"></i>
+                    <h3>Tailscale VPN</h3>
+                    <p>Membina rangkaian VPN peribadi yang selamat untuk mengakses server anda dari luar rumah.</p>
+                </div>
+                <!-- App 9 -->
+                <div class="glass-card reveal-up" style="transition-delay: 0.8s;">
+                    <i class="fa-solid fa-robot" style="color:#A855F7;"></i>
+                    <h3>Hermes AI</h3>
+                    <p>AI Agent pintar hos sendiri dengan memori berterusan yang boleh dihubungkan ke Telegram/Discord.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. POST-CLASS & CONCLUSION -->
+    <section class="container">
+        <div class="split-layout">
+            <div class="reveal-left">
+                <span class="section-subtitle">Cabaran</span>
+                <h2 class="section-title">Checklist Troubleshooting</h2>
+                <div class="glass-card" style="margin-top:30px;">
+                    <ul class="comp-list">
+                        <li><i class="fa-solid fa-xmark"></i> Tak boleh akses IP? -> <span style="color:#10B981;">Semak
+                                Router/Firewall</span></li>
+                        <li><i class="fa-solid fa-xmark"></i> Docker gagal run? -> <span style="color:#10B981;">Check
+                                'docker logs'</span></li>
+                        <li><i class="fa-solid fa-xmark"></i> Port conflict? -> <span style="color:#10B981;">Tukar port
+                                dalam setting</span></li>
+                        <li
+                            style="font-weight:bold; color:var(--accent-orange); justify-content:center; padding-top:20px;">
+                            ✓ Golden Rule: Cuba Reboot Dahulu!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-content reveal-right">
+                <span class="section-subtitle">Idea Projek Seterusnya</span>
+                <h2 class="section-title">Apa Selepas Ini?</h2>
+                <p>Jangan biarkan server anda sejuk. Eksplorasi teknologi baru dengan projek-projek ini:</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:20px;">
+                    <span
+                        style="padding:10px 20px; background:rgba(59, 130, 246, 0.2); border-radius:20px; border:1px solid var(--accent-blue);">Home
+                        Automation (Home Assistant)</span>
+                    <span
+                        style="padding:10px 20px; background:rgba(249, 115, 22, 0.2); border-radius:20px; border:1px solid var(--accent-orange);">AI
+                        Server (Ollama)</span>
+                    <span
+                        style="padding:10px 20px; background:rgba(16, 185, 129, 0.2); border-radius:20px; border:1px solid #10B981;">VPN
+                        Pribadi (Wireguard)</span>
+                    <span
+                        style="padding:10px 20px; background:rgba(139, 92, 246, 0.2); border-radius:20px; border:1px solid #8B5CF6;">CCTV
+                        NVR (Frigate)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container reveal-up">
+            <h2>"Server terbaik ialah server yang anda benar-benar gunakan."</h2>
+            <p>Tahniah kerana berjaya membina Homelab pertama anda!</p>
+
+            <div
+                style="display:inline-flex; align-items:center; justify-content:center; width:150px; height:150px; background:#fff; padding:10px; border-radius:12px; margin-bottom:20px;">
+                <!-- QR Code Placeholder -->
+                <i class="fa-solid fa-qrcode" style="font-size: 100px; color: #000;"></i>
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom:0;">Scan untuk Feedback, Kumpulan Telegram & Nota Kelas</p>
+        </div>
+    </footer>
+
+    <!-- Scripts for Animations -->
+    <!-- GSAP Core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- GSAP ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lenis Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <script>
+        // 1. Initialize Lenis (Smooth Scrolling)
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        })
+
+        // Get scroll value and pass to ScrollTrigger
+        lenis.on('scroll', ScrollTrigger.update)
+
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000)
+        })
+        gsap.ticker.lagSmoothing(0)
+
+        // 2. GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Parallax effect
+        gsap.to(".reveal-hero", {
+            y: -100,
+            opacity: 0,
+            stagger: 0.1,
+            ease: "none",
+            scrollTrigger: {
+                trigger: ".hero",
+                start: "top top",
+                end: "bottom top",
+                scrub: true
+            }
+        });
+
+        // Reveal Up animations (Text, Cards)
+        gsap.utils.toArray('.reveal-up').forEach(element => {
+            gsap.fromTo(element,
+                { y: 50, autoAlpha: 0 },
+                {
+                    y: 0,
+                    autoAlpha: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%", // Starts animation when element is 85% down the viewport
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+
+        // Reveal Left
+        gsap.utils.toArray('.reveal-left').forEach(element => {
+            gsap.fromTo(element,
+                { x: -50, autoAlpha: 0 },
+                {
+                    x: 0,
+                    autoAlpha: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+
+        // Reveal Right
+        gsap.utils.toArray('.reveal-right').forEach(element => {
+            gsap.fromTo(element,
+                { x: 50, autoAlpha: 0 },
+                {
+                    x: 0,
+                    autoAlpha: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+
+        // 3. Copy Command Function
+        function copyCommand() {
+            const cmdText = "curl -fsSL https://get.casaos.io | sudo bash";
+            navigator.clipboard.writeText(cmdText).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Disalin!';
+                btn.style.background = '#10B981';
+                btn.style.boxShadow = '0 4px 14px rgba(16, 185, 129, 0.4)';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'var(--accent-blue)';
+                    btn.style.boxShadow = '0 4px 14px var(--accent-blue-glow)';
+                }, 2000);
+            }).catch(err => {
+                console.error('Gagal menyalin teks: ', err);
+            });
+        }
+
+        // 4. Slide Navigation logic (Buttonless)
+        const sections = Array.from(document.querySelectorAll('section'));
+        const footer = document.querySelector('footer');
+        if (footer) {
+            sections.push(footer);
+        }
+        let currentSectionIndex = 0;
+
+        function updateCurrentIndex() {
+            const scrollPos = window.scrollY + window.innerHeight / 3;
+            for (let i = 0; i < sections.length; i++) {
+                const el = sections[i];
+                if (el.offsetTop <= scrollPos && (el.offsetTop + el.offsetHeight) > scrollPos) {
+                    currentSectionIndex = i;
+                    break;
+                }
+            }
+        }
+
+        window.addEventListener('scroll', updateCurrentIndex);
+        updateCurrentIndex();
+
+        function navigateToSection(index) {
+            if (index >= 0 && index < sections.length) {
+                window.removeEventListener('scroll', updateCurrentIndex);
+                currentSectionIndex = index;
+                
+                lenis.scrollTo(sections[index], {
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                    onComplete: () => {
+                        setTimeout(() => {
+                            window.addEventListener('scroll', updateCurrentIndex);
+                        }, 50);
+                    }
+                });
+            }
+        }
+
+        // Mouse click navigation (Left/Right half of screen)
+        document.addEventListener('click', (e) => {
+            // Ignore if clicking on interactive elements
+            if (
+                e.target.closest('button') || 
+                e.target.closest('a') || 
+                e.target.closest('code') || 
+                e.target.closest('pre') || 
+                e.target.closest('input') || 
+                e.target.closest('.btn-copy') ||
+                e.target.closest('#typing-terminal')
+            ) {
+                return;
+            }
+
+            const clickX = e.clientX;
+            const halfWidth = window.innerWidth / 2;
+
+            // Ignore scrollbar area clicks
+            if (clickX > window.innerWidth - 20) {
+                return;
+            }
+
+            if (clickX > halfWidth) {
+                navigateToSection(currentSectionIndex + 1);
+            } else {
+                navigateToSection(currentSectionIndex - 1);
+            }
+        });
+
+        // Keyboard navigation (Left/Right arrow & Spacebar)
+        document.addEventListener('keydown', (e) => {
+            // Ignore when typing inside any inputs or textareas (if added in future)
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                navigateToSection(currentSectionIndex + 1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                navigateToSection(currentSectionIndex - 1);
+            }
+        });
+    </script>
+</body>
+
+</html>
