@@ -34,12 +34,8 @@ Navigasi slaid ini adalah sangat intuitif:
 
 ## 📦 Cara Menjalankan Projek
 
-1. Buka folder projek:
-   ```bash
-   cd slide-homelab
-   ```
-2. Buka fail [index.html](file:///home/maui/github/slide-homelab/index.html) terus pada mana-mana pelayar web moden (Chrome, Safari, Firefox, Edge).
-   - *Alternatif:* Jalankan menggunakan Live Server di VS Code untuk pengalaman pembangunan yang lebih baik.
+1. Buka pautan persembahan slaid secara langsung: [https://maui2023.github.io/slide-homelab](https://maui2023.github.io/slide-homelab)
+2. *Alternatif (Tempatan):* Buka folder projek dan jalankan fail `index.html` menggunakan Live Server di VS Code untuk pembangunan tempatan.
 
 ## 📝 Kandungan Slaid Pembentangan
 
